@@ -57,5 +57,7 @@ Desktop.ini
 !**/logs/.gitkeep
 *.pid
 
-# Excluir entorno local de Nginx
+# ==========================================
+# NGINX LOCAL
+# ==========================================
 nginx-local/
