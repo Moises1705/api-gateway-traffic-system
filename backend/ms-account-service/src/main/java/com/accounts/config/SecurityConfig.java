@@ -1,4 +1,4 @@
-package com.auth.config;
+package com.accounts.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,13 +13,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Deshabilitar CSRF para permitir peticiones POST desde herramientas externas/Swagger
+                // Deshabilitar CSRF para permitir peticiones POST desde herramientas externas/Gateway
                 .csrf(csrf -> csrf.disable())
-                // Configurar acceso público a los endpoints de autenticación y Swagger
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated()
-                );
+                // Configurar acceso público a los endpoints de cuentas y Swagger
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/accounts/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll().anyRequest().authenticated());
 
         return http.build();
     }
