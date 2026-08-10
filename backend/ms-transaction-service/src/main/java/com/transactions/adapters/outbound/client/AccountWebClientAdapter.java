@@ -12,15 +12,22 @@ public class AccountWebClientAdapter implements AccountClientPort {
     private final WebClient webClient;
 
     public AccountWebClientAdapter(WebClient.Builder webClientBuilder) {
-        // Se conecta al ms-account-service en el puerto 8082
+        // Apunta al ms-account-service
         this.webClient = webClientBuilder.baseUrl("http://localhost:8082").build();
     }
 
     @Override
     public boolean validateAndDebit(String accountNumber, BigDecimal amount) {
         try {
-            // Aquí puedes conectar posteriormente con el endpoint de cuentas para actualizar saldo
-            return true;
+            Boolean response = webClient.post()
+                    .uri(uriBuilder -> uriBuilder.path("/api/accounts/{accountNumber}/debit")
+                            .queryParam("amount", amount)
+                            .build(accountNumber))
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block(); // Bloqueante para mantener la transacción sincrónica (o manejar con Reactive si prefieres)
+
+            return response != null && response;
         } catch (Exception e) {
             return false;
         }
@@ -29,7 +36,15 @@ public class AccountWebClientAdapter implements AccountClientPort {
     @Override
     public boolean credit(String accountNumber, BigDecimal amount) {
         try {
-            return true;
+            Boolean response = webClient.post()
+                    .uri(uriBuilder -> uriBuilder.path("/api/accounts/{accountNumber}/credit")
+                            .queryParam("amount", amount)
+                            .build(accountNumber))
+                    .retrieve()
+                    .bodyToMono(Boolean.class)
+                    .block();
+
+            return response != null && response;
         } catch (Exception e) {
             return false;
         }
